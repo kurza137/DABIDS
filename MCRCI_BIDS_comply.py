@@ -9,60 +9,65 @@ import re
 import csv
 
 def rename_folders_and_create_log(source_dir, log_path):
-    # Counter for renamed folders
+    # Contador para las carpetas renombradas
     renamed_folders_count = 0
     
-    # Map to track the assigned subject numbers
+    # Mapa para llevar el seguimiento de los números de sujetos asignados
     subject_number_map = {}
     next_subject_number = 1
     
-    # Dictionary to map MCRCI to participant states
+    # Diccionario para mapear MCRCI a estados de participantes
     mcrci_to_state = {
         "1": "patient_new",
         "2": "patient_treated",
         "3": "control"
     }
     
-    # List to save the information of the participants
+    # Lista para guardar la información de los participantes
     participants_info = []
 
-    # Browse the source directory
-    for folder_name in os.listdir(source_dir):
+    # Recorrer el directorio fuente
+    for folder_name in sorted(os.listdir(source_dir)):
         if os.path.isdir(os.path.join(source_dir, folder_name)):
-            # Extract the number at the beginning of the folder name
+            # Extraer el número al principio del nombre de la carpeta
             match = re.match(r"(\d+)_MCRCI(\d)_T(\d)", folder_name)
             if match:
                 original_number = match.group(1)
                 mcrci_sequence = match.group(2)
                 time_point = match.group(3)
 
-                # Assign a new subject number if it does not have one yet
-                if original_number not in subject_number_map:
-                    subject_number_map[original_number] = next_subject_number
+                # Asignar un nuevo número de sujeto si aún no tiene uno
+                subject_key = (original_number, mcrci_sequence)
+                if subject_key not in subject_number_map:
+                    subject_number_map[subject_key] = next_subject_number
                     next_subject_number += 1
                 
-                # Build the new folder name
-                new_folder_name = f"sub{str(subject_number_map[original_number]).zfill(2)}_T{time_point}"
+                # Construir el nuevo nombre de la carpeta
+                new_folder_name = f"sub{str(subject_number_map[subject_key]).zfill(2)}_T{time_point}"
                 
-                # Rename the folder
-                original_path = os.path.join(source_dir, folder_name)
+                # Comprobar si el nuevo nombre ya existe
                 new_path = os.path.join(source_dir, new_folder_name)
-                os.rename(original_path, new_path)
-                renamed_folders_count += 1
-                
-                # Save the information in the participants list
-                participants_info.append({
-                    "original_name": folder_name,
-                    "new_name": new_folder_name,
-                    "original_number": original_number,
-                    "mcrci_sequence": mcrci_sequence,
-                    "state": mcrci_to_state[mcrci_sequence],
-                    "time_point": time_point
-                })
-                
-                print(f"Renamed: {folder_name} to {new_folder_name}")
+                if not os.path.exists(new_path):
+                    # Renombrar la carpeta
+                    original_path = os.path.join(source_dir, folder_name)
+                    os.rename(original_path, new_path)
+                    renamed_folders_count += 1
+                    
+                    # Guardar la información en la lista de participantes
+                    participants_info.append({
+                        "original_name": folder_name,
+                        "new_name": new_folder_name,
+                        "original_number": original_number,
+                        "mcrci_sequence": mcrci_sequence,
+                        "state": mcrci_to_state[mcrci_sequence],
+                        "time_point": time_point
+                    })
+                    
+                    print(f"Renamed: {folder_name} to {new_folder_name}")
+                else:
+                    print(f"Error: Cannot rename {folder_name} to {new_folder_name} because the destination already exists.")
     
-    # Write the information in the log file
+    # Escribir la información en el archivo de log
     with open(log_path, 'w', newline='') as file:
         fieldnames = ['original_name', 'new_name', 'original_number', 'mcrci_sequence', 'state', 'time_point']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -74,7 +79,7 @@ def rename_folders_and_create_log(source_dir, log_path):
     print(f"Participants information logged at: {log_path}")
 
 if __name__ == "__main__":
-    # Define the source directory and the log file
+    # Definir el directorio fuente y el archivo de log
     source_dir = "/bcbl/data/MRI/BIN/DATA/BIDS"
     log_path = "/bcbl/data/MRI/BIN/DATA/BIDS/participants_log.csv"
     rename_folders_and_create_log(source_dir, log_path)
