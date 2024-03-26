@@ -25,9 +25,12 @@ def rename_folders_and_create_log(source_dir, log_path):
     
     # Lista para guardar la información de los participantes
     participants_info = []
+    
+    # Set para almacenar combinaciones únicas de número original y secuencia MCRCI
+    unique_combinations = set()
 
     # Recorrer el directorio fuente
-    for folder_name in sorted(os.listdir(source_dir)):
+    for folder_name in os.listdir(source_dir):
         if os.path.isdir(os.path.join(source_dir, folder_name)):
             # Extraer el número al principio del nombre de la carpeta
             match = re.match(r"(\d+)_MCRCI(\d)_T(\d)", folder_name)
@@ -35,21 +38,22 @@ def rename_folders_and_create_log(source_dir, log_path):
                 original_number = match.group(1)
                 mcrci_sequence = match.group(2)
                 time_point = match.group(3)
+                unique_key = f"{original_number}_MCRCI{mcrci_sequence}"
 
                 # Asignar un nuevo número de sujeto si aún no tiene uno
-                subject_key = (original_number, mcrci_sequence)
-                if subject_key not in subject_number_map:
-                    subject_number_map[subject_key] = next_subject_number
+                if unique_key not in unique_combinations:
+                    unique_combinations.add(unique_key)
+                    subject_number_map[unique_key] = next_subject_number
                     next_subject_number += 1
-                
+
                 # Construir el nuevo nombre de la carpeta
-                new_folder_name = f"sub{str(subject_number_map[subject_key]).zfill(2)}_T{time_point}"
+                new_folder_name = f"sub{str(subject_number_map[unique_key]).zfill(2)}_T{time_point}"
                 
-                # Comprobar si el nuevo nombre ya existe
+                # Renombrar la carpeta
+                original_path = os.path.join(source_dir, folder_name)
                 new_path = os.path.join(source_dir, new_folder_name)
-                if not os.path.exists(new_path):
-                    # Renombrar la carpeta
-                    original_path = os.path.join(source_dir, folder_name)
+                
+                if not os.path.exists(new_path):  # Asegurarse de que el nuevo path no exista
                     os.rename(original_path, new_path)
                     renamed_folders_count += 1
                     
@@ -65,7 +69,7 @@ def rename_folders_and_create_log(source_dir, log_path):
                     
                     print(f"Renamed: {folder_name} to {new_folder_name}")
                 else:
-                    print(f"Error: Cannot rename {folder_name} to {new_folder_name} because the destination already exists.")
+                    print(f"Error: The path {new_path} already exists. Cannot rename {folder_name} to {new_folder_name}")
     
     # Escribir la información en el archivo de log
     with open(log_path, 'w', newline='') as file:
