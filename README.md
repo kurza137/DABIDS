@@ -11,6 +11,6 @@ Detalladas en cada script o en el TFM
 - mne_bids
 - pandas
 ## Funding
-Este proyecto fue financiado por un año (octubre 2022-septiembre 2023) a través del programa Gipuzkoa Next otorgado al proyecto MultiModalCRCI (exp. 294/22) en el BCBL y en colaboración con la Fundación Oncológica (San Sebastián-Donostia).
+Este proyecto fue financiado por un año (octubre 2022-septiembre 2023) a través del programa Gipuzkoa Next otorgado al proyecto MultiModalCRCI (exp. 294/22) en el centro de investigación Basque Center on Cognition, Brain and Language (BCBL) y en colaboración con el Instituto Oncológico (Onkologikoa)
 ## Contacto
 Para preguntas o colaboraciones, por favor contacta a d.carcedo@bcbl.eu
