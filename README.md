@@ -4,7 +4,8 @@
 Parte de mi TFM titulado "Implementación de BIDS en la Investigación Oncológica: Un Enfoque Multimodal para Datos de Neuroimagen, EEG, Neuropsicología y Clínicos". Los scripts facilitan la conversión de datos neurocientíficos a la estructura de datos BIDS, con un enfoque especial en la integración de múltiples modalidades de datos.
 No incluye el set de datos.
 ## Cómo Utilizar
-Detalladas en cada script o en el TFM
+Detalladas en cada script o en el TFM.
+
 En noviembre de 2024 di un taller sobre convertir un dataset de EEG a BIDS paso a paso https://colab.research.google.com/drive/1kkqNz1u2gsNaYl-D9kp6NPnYPEnbq-NI (en inglés)
 ## Requisitos
 - Python 3.6+
