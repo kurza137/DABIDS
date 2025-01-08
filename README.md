@@ -5,6 +5,7 @@ Parte de mi TFM titulado "Implementación de BIDS en la Investigación Oncológi
 No incluye el set de datos.
 ## Cómo Utilizar
 Detalladas en cada script o en el TFM
+En noviembre de 2024 di un taller sobre convertir un dataset de EEG a BIDS paso a paso https://colab.research.google.com/drive/1kkqNz1u2gsNaYl-D9kp6NPnYPEnbq-NI (en inglés)
 ## Requisitos
 - Python 3.6+
 - mne
